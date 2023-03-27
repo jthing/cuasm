@@ -20,7 +20,7 @@ uint64_t htoi(const char *ptr)
 
     uint64_t value = 0;
     for (int i = 0; i < 16; i++) {
-        uint8_t ch = ptr[i] >= '0' && ptr[i] <= 9 ? ptr[i] - '0' : ptr[i] - 'A';
+        uint8_t ch = ptr[i] >= '0' && ptr[i] <= '9' ? ptr[i] - '0' : ptr[i] - 'A';
         value += ch;
         value <<= 4;
     }
