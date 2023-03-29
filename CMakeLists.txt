@@ -3,4 +3,5 @@ project(cuasm C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(cuasm main.c htoi.c htoi.h)
+add_executable(cuasm cuasm.c htoi.c)
+add_executable(client client.c)
