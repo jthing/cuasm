@@ -1,3 +1,7 @@
+
+customTargets.xml
+hexy.txt
+cmake-build-debug
 # Prerequisites
 *.d
 
