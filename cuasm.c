@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <libgen.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <string.h>
 #include "htoi.h"
 
 #define MAXLINE 1024
@@ -10,14 +10,14 @@
 char *Fgets(char *s, int size, FILE *stream)
 {
     char *ret = fgets(s, size, stream);
-    if (ret == NULL && errno != 0) {
+    if (ret == NULL && ferror(stream)) {
         perror("fgets: ");
         exit(errno);
     }
     return ret;
 }
 
-void Printf(char *fmt, ...)
+int Printf(char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
@@ -27,6 +27,7 @@ void Printf(char *fmt, ...)
         perror("printf: ");
         exit(errno);
     }
+    return ret;
 }
 
 void Fclose(FILE *file)
@@ -40,7 +41,6 @@ void Fclose(FILE *file)
 
 int main(int argc, char *argv[])
 {
-    char *name = basename(argv[0]);
     FILE *in_file = stdin;
     if (argc > 1) {
         in_file = fopen(argv[1], "r");
