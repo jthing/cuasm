@@ -40,11 +40,6 @@ int main (int argc, char *argv[])
 	}
 
   FILE *out = Popen ("./cuasm", "w");
-  if (out == NULL)
-	{
-	  perror ("cuasm");
-	  return errno;
-	}
 
   char buf[MAXLINE];
   while (Fgets (buf, MAXLINE, infile) != NULL)
