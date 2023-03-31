@@ -5,36 +5,41 @@
 #include <libgen.h>
 #include <errno.h>
 #include <string.h>
+#include "wrap.h"
 
 #define MAXLINE 1024
 
-int main(int argc, char *argv[])
+int main (int argc, char *argv[])
 {
-    char *name = basename(argv[0]);
-    if (argc < 1) {
-        fprintf(stderr, "Usage: %s <input-file>\n", name);
-        return -1;
-    }
+  char *name = basename (argv[0]);
+  if (argc < 1)
+	{
+	  Fprintf (stderr, "Usage: %s <input-file>\n", name);
+	  return -1;
+	}
 
-    FILE *infile = fopen(argv[1], "r");
-    if (infile == NULL) {
-        perror(basename(argv[1]));
-        return errno;
-    }
+  FILE *infile = fopen (argv[1], "r");
+  if (infile == NULL)
+	{
+	  perror (basename (argv[1]));
+	  return errno;
+	}
 
-    FILE *out = popen("./cuasm", "w");
-    if (out == NULL) {
-        perror("cuasm");
-        return errno;
-    }
+  FILE *out = Popen ("./cuasm", "w");
+  if (out == NULL)
+	{
+	  perror ("cuasm");
+	  return errno;
+	}
 
-    char buf[MAXLINE];
-    while (fgets(buf, MAXLINE, infile) != NULL) {
-        fputs(buf, out);
-    }
+  char buf[MAXLINE];
+  while (Fgets (buf, MAXLINE, infile) != NULL)
+	{
+	  Fputs (buf, out);
+	}
 
-    fclose(infile);
-    pclose(out);
+  Fclose (infile);
+  Pclose (out);
 
-    return 0;
+  return 0;
 }
