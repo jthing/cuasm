@@ -31,6 +31,7 @@ char *Fgets (char *s, int size, FILE *stream)
 	}
   return ret;
 }
+
 void Fputs (const char *s, FILE *stream)
 {
   if (fputs (s, stream) == EOF)
