@@ -15,15 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
-;;; Technical issues:
-
-;; go here
-
-;;; Code:
-
-;; Data used for entering APL unicode chacters and making the toolbar.
-
-
 #include <stdio.h>
 #include <libgen.h>
 #include <errno.h>
