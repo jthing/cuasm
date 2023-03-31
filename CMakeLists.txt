@@ -3,5 +3,5 @@ project(cuasm C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(cuasm cuasm.c htoi.c wrap.c wrap.h)
-add_executable(client client.c wrap.c wrap.h)
+add_executable(cuasm cuasm.c htoi.c wrap.c)
+add_executable(client client.c wrap.c)
