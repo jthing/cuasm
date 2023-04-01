@@ -4,7 +4,8 @@ hexy.txt
 cmake-build-debug
 # Prerequisites
 *.d
-
+doc/html
+doc/latex
 .idea
 
 # Object files
