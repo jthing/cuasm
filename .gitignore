@@ -1,4 +1,5 @@
 
+vcpkg.json
 customTargets.xml
 hexy.txt
 cmake-build-debug

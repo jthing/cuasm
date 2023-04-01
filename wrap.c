@@ -21,6 +21,14 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <stdlib.h>
 #include "wrap.h"
 
+/**
+ * error-checked fgets
+ * \see fgets
+ * @param s
+ * @param size
+ * @param stream
+ * @return
+ */
 char *Fgets (char *s, int size, FILE *stream)
 {
   char *ret = fgets (s, size, stream);
@@ -32,6 +40,12 @@ char *Fgets (char *s, int size, FILE *stream)
   return ret;
 }
 
+/**
+ * error-checked fputs
+ * \see fputs
+ * @param s
+ * @param stream
+ */
 void Fputs (const char *s, FILE *stream)
 {
   if (fputs (s, stream) == EOF)
@@ -41,6 +55,13 @@ void Fputs (const char *s, FILE *stream)
 	}
 }
 
+/**
+ * error-checked printf
+ * \see printf
+ * @param fmt
+ * @param ...
+ * @return characters read
+ */
 int Printf (char *fmt, ...)
 {
   va_list ap;
@@ -55,6 +76,14 @@ int Printf (char *fmt, ...)
   return ret;
 }
 
+/**
+ * error-checked fprint
+ * \see fprintf
+ * @param stream
+ * @param fmt
+ * @param ...
+ * @return characters read
+ */
 int Fprintf (FILE *stream, char *fmt, ...)
 {
   va_list ap;
@@ -69,6 +98,11 @@ int Fprintf (FILE *stream, char *fmt, ...)
   return ret;
 }
 
+/**
+ * error-check fclose
+ * \see fclose
+ * @param file
+ */
 void Fclose (FILE *file)
 {
   int ret = fclose (file);
@@ -79,6 +113,13 @@ void Fclose (FILE *file)
 	}
 }
 
+/**
+ * error-checked popen
+ * \see popen
+ * @param command
+ * @param type
+ * @return pointer to stream
+ */
 FILE *Popen (const char *command, const char *type)
 {
   FILE *stream = popen(command, type);
@@ -90,6 +131,11 @@ FILE *Popen (const char *command, const char *type)
   return stream;
 }
 
+/**
+ * error-checked pclose
+ * \see pclose
+ * @param stream
+ */
 void Pclose (FILE *stream)
 {
   if (pclose (stream) == -1)
