@@ -22,7 +22,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "wrap.h"
 
 /**
- * error-checked fgets
+ * \brief error-checked fgets
  * \see fgets
  * @param s
  * @param size
@@ -41,7 +41,8 @@ char *Fgets (char *s, int size, FILE *stream)
 }
 
 /**
- * error-checked fputs
+ * \brief error-checked fputs
+ *
  * \see fputs
  * @param s
  * @param stream
@@ -56,13 +57,14 @@ void Fputs (const char *s, FILE *stream)
 }
 
 /**
- * error-checked printf
+ * \brief error-checked printf
+ *
  * \see printf
  * @param fmt
  * @param ...
  * @return characters read
  */
-int Printf (char *fmt, ...)
+int Printf (const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
@@ -77,14 +79,15 @@ int Printf (char *fmt, ...)
 }
 
 /**
- * error-checked fprint
+ * \brief error-checked fprint
+ *
  * \see fprintf
  * @param stream
  * @param fmt
  * @param ...
  * @return characters read
  */
-int Fprintf (FILE *stream, char *fmt, ...)
+int Fprintf (FILE *stream, const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
@@ -99,7 +102,8 @@ int Fprintf (FILE *stream, char *fmt, ...)
 }
 
 /**
- * error-check fclose
+ * \brief error-check fclose
+ *
  * \see fclose
  * @param file
  */
@@ -114,7 +118,8 @@ void Fclose (FILE *file)
 }
 
 /**
- * error-checked popen
+ * \brief error-checked popen
+ *
  * \see popen
  * @param command
  * @param type
@@ -132,7 +137,8 @@ FILE *Popen (const char *command, const char *type)
 }
 
 /**
- * error-checked pclose
+ * \brief error-checked pclose
+ *
  * \see pclose
  * @param stream
  */

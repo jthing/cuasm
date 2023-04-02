@@ -5,8 +5,8 @@
 #pragma once
 #include <bits/types/FILE.h>
 
-int Printf(char *, ...);
-int Fprintf (FILE *, char *, ...);
+int Printf(const char *, ...);
+int Fprintf (FILE *, const char *, ...);
 char *Fgets(char *, int, FILE *);
 void Fputs(const char *, FILE *s);
 FILE *Popen(const char *, const char *);
