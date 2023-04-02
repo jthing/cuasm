@@ -17,7 +17,6 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 #include <unistd.h>
 #include "htoi.h"
