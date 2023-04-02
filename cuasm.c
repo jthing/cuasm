@@ -19,10 +19,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <unistd.h>
-#include "htoi.h"
 #include "wrap.h"
-#include "utils.h"
 
 #define MAXLINE 1024
 
