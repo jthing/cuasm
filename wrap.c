@@ -101,6 +101,19 @@ int Fprintf (FILE *stream, const char *fmt, ...)
   return ret;
 }
 
+int Snprintf (char *str, size_t size, const char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  int ret = vsnprintf (str, size, fmt, ap);
+  if (ret < 1)
+	{
+	  perror("snprintf");
+	  exit(errno);
+	}
+  return ret;
+}
+
 /**
  * \brief error-check fclose
  *

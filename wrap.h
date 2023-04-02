@@ -7,6 +7,7 @@
 
 int Printf(const char *, ...);
 int Fprintf (FILE *, const char *, ...);
+int Snprintf(char *str, size_t size, const char *fmt, ...);
 char *Fgets(char *, int, FILE *);
 void Fputs(const char *, FILE *s);
 FILE *Popen(const char *, const char *);

@@ -25,6 +25,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #define MAXLINE 1024
 
+
 int main (int argc, char *argv[])
 {
   if(isatty(STDIN_FILENO))

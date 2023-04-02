@@ -22,6 +22,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "wrap.h"
 
 #define MAXLINE 1024
+#define MAXCMD 4096
 
 int main (int argc, char *argv[])
 {
@@ -36,7 +37,20 @@ int main (int argc, char *argv[])
 		}
 	}
 
-  FILE *out = Popen ("/usr/bin/cpp | ./cuasm_bg", "w");
+  char *cpp = getenv ("CPP_PATH");
+  if (cpp == NULL)
+	{
+	  cpp = "/usr/bin/cpp";
+	}
+  char *cuasm = getenv("CUASM_PATH");
+  if (cuasm == NULL)
+	{
+	  cuasm = "./cuasm_bg";
+	}
+
+  char outbuf[MAXCMD];
+  Snprintf(outbuf, MAXCMD, "%s | %s", cpp, cuasm);
+  FILE *out = Popen (outbuf, "w");
 
   char buf[MAXLINE];
   while (Fgets (buf, MAXLINE, infile) != NULL)
