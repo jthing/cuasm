@@ -28,32 +28,29 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
 int main (int argc, char *argv[])
 {
-  FILE *infile = stdin;
-  if (argc > 1)
+  if(isatty(STDIN_FILENO))
 	{
-	  infile = fopen (argv[1], "r");
-	  if (infile == NULL)
+	  fprintf(stderr, "PLEASE PIPE ME!!.\n");
+	  exit(1);
+	}
+
+  FILE *in_file = stdin;
+
+  char buf[MAXLINE + 1];
+  while (Fgets (buf, MAXLINE + 1, in_file) != NULL)
+	{
+	  char *ln = ws_strip (buf);
+	  if (ln[0] == '#' || ln[0] == '\n')
 		{
-		  perror (argv[1]);
-		  exit (errno);
+		  continue;
 		}
+	  Printf ("%s = %lu\n", ln, htoi (ln));
 	}
 
-  FILE *out = Popen ("/usr/bin/cpp | ./cuasm_bg", "w");
-
-  char buf[MAXLINE];
-  while (Fgets (buf, MAXLINE, infile) != NULL)
+  if (in_file != stdin)
 	{
-	  Fputs (buf, out);
-	}
-
-  Pclose (out);
-
-  if (infile != stdin)
-	{
-	  Fclose (infile);
+	  Fclose (in_file);
 	}
 
   return 0;
 }
-

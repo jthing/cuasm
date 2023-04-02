@@ -23,7 +23,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /**
  * \brief error-checked fgets
- * \see fgets
+ * \see \fn fgets
  * @param s
  * @param size
  * @param stream
@@ -43,7 +43,7 @@ char *Fgets (char *s, int size, FILE *stream)
 /**
  * \brief error-checked fputs
  *
- * \see fputs
+ * \see \fn fputs
  * @param s
  * @param stream
  */
@@ -59,7 +59,7 @@ void Fputs (const char *s, FILE *stream)
 /**
  * \brief error-checked printf
  *
- * \see printf
+ * \see \fn printf
  * @param fmt
  * @param ...
  * @return characters read
@@ -81,7 +81,7 @@ int Printf (const char *fmt, ...)
 /**
  * \brief error-checked fprint
  *
- * \see fprintf
+ * \see \fn fprintf
  * @param stream
  * @param fmt
  * @param ...
@@ -104,7 +104,7 @@ int Fprintf (FILE *stream, const char *fmt, ...)
 /**
  * \brief error-check fclose
  *
- * \see fclose
+ * \see \fn fclose
  * @param file
  */
 void Fclose (FILE *file)
@@ -120,7 +120,7 @@ void Fclose (FILE *file)
 /**
  * \brief error-checked popen
  *
- * \see popen
+ * \see \fn popen
  * @param command
  * @param type
  * @return pointer to stream
@@ -139,7 +139,7 @@ FILE *Popen (const char *command, const char *type)
 /**
  * \brief error-checked pclose
  *
- * \see pclose
+ * \see \fn pclose
  * @param stream
  */
 void Pclose (FILE *stream)
