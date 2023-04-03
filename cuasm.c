@@ -19,6 +19,9 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <getopt.h>
+#include <ctype.h>
+#include <unistd.h>
 #include "wrap.h"
 
 #define MAXLINE 1024
@@ -26,16 +29,47 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
 int main (int argc, char *argv[])
 {
-  FILE *infile = stdin;
-  if (argc > 1)
+  int c;
+  char *outfile = "elf.o";
+  while ( (c = getopt (argc, argv, "o:")) != -1)
+	switch (c)
+  		{
+	  	case 'o':
+			outfile = optarg;
+			break;
+	  	case '?':
+			if (optopt == 'o')
+		  		Fprintf (stderr, "Option `-%c' requires an argument.\n", optopt);
+			else if (isprint (optopt))
+		  		Fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+			else
+		  		Fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+			return 1;
+	  	default:
+			abort();
+		}
+
+  FILE *infile = NULL;
+  if(!isatty(STDIN_FILENO))
 	{
-	  infile = fopen (argv[1], "r");
+	  infile = stdin;
+	}
+  if (optind < argc)
+	{
+	  infile = fopen (argv[optind], "r");
 	  if (infile == NULL)
 		{
-		  perror (argv[1]);
+		  perror (argv[optind]);
 		  exit (errno);
 		}
 	}
+  if (infile == NULL)
+	{
+	  Fprintf(stderr, "Usage: cuasm [-o <outfile>] <infile>\n");
+	  exit (1);
+	}
+
+  // Pipe the input file through CPP (CPP_PATH) before cuasm_bg (CUASM_PATH)
 
   char *cpp = getenv ("CPP_PATH");
   if (cpp == NULL)
@@ -51,6 +85,12 @@ int main (int argc, char *argv[])
   char outbuf[MAXCMD];
   Snprintf(outbuf, MAXCMD, "%s | %s", cpp, cuasm);
   FILE *out = Popen (outbuf, "w");
+
+  // send command line over as the first line
+  Fprintf (out, "\n");
+  for (int i = 0; i < argc; i++)
+	Fprintf (out, "%s ", argv[i]);
+  Fprintf (out, "\n");
 
   char buf[MAXLINE];
   while (Fgets (buf, MAXLINE, infile) != NULL)

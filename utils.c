@@ -52,3 +52,24 @@ char *ws_strip (char *buf)
   ws_bstrip (ln);
   return ln;
 }
+
+/**
+ * \brief parse a line into argc, argv form
+ *
+ * @param cmd   - the line to convert
+ * @param p_int - sets the size argc
+ * @return argv
+ */
+char **parse_cmd (char *cmd, int *p_int)
+{
+  static char *c[MAXARG];
+  int i = 0;
+  char *s = strtok (cmd, " ");
+  c[i++] = s;
+  while ((s = strtok (NULL, " ")) != NULL && i < MAXARG)
+	c[i++] = s;
+  *p_int = i;
+  return c;
+}
+
+
