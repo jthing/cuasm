@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.22)
 project(cuasm-compiler C)
 
 set(CMAKE_C_STANDARD 11)
@@ -17,6 +17,8 @@ add_executable(cuasm_bg
         ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/wrap.c
         ${CMAKE_INCLUDE_PATH})
+
+add_subdirectory(thirdparty)
 
 option(BUILD_TESTS "Build library tests" OFF)
 option(BUILD_EXAMPLES "Build example executables" OFF)
