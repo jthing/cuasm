@@ -1,0 +1,1 @@
+project(cuasm-compiler C)

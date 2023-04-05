@@ -14,12 +14,12 @@
     </option>
     <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="true">
       <scope name="Project Source Files" level="INFORMATION" enabled="true" editorAttributes="INFORMATION_ATTRIBUTES">
-        <option name="processCode" value="true" />
-        <option name="processLiterals" value="true" />
+        <option name="processCode" value="false" />
+        <option name="processLiterals" value="false" />
         <option name="processComments" value="true" />
       </scope>
-      <option name="processCode" value="true" />
-      <option name="processLiterals" value="true" />
+      <option name="processCode" value="false" />
+      <option name="processLiterals" value="false" />
       <option name="processComments" value="true" />
     </inspection_tool>
   </profile>

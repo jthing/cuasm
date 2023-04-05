@@ -19,7 +19,7 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <libgen.h>
 #include <errno.h>
 #include <string.h>
-#include "wrap.h"
+#include "wrap/wrap.h"
 
 #define MAXLINE 1024
 
