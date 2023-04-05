@@ -1,4 +1,5 @@
-
+thirdparty/build
+cmake_install.cmake
 vcpkg.json
 customTargets.xml
 hexy.txt
