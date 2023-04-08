@@ -70,3 +70,12 @@ add_library(unp STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/unp/write_fd.c
         ${CMAKE_INCLUDE_PATH}
         )
+
+option(BUILD_TESTS "Build library tests" OFF)
+
+target_include_directories(unp PUBLIC include)
+
+if (BUILD_TESTS)
+    message(STATUS "Building Unity test framework.")
+    include_directories(Unity)
+endif()

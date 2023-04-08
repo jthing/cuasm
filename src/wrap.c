@@ -15,11 +15,97 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 
+#include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "wrap.h"
+
+/**
+ * \brief error-checked malloc
+ *
+ * Also zeroes out returned memory.
+ * \see \fn malloc
+ * @param nmemb
+ * @return ptr to memory
+ */
+void *Malloc (size_t nmemb)
+{
+  assert(nmemb > 0);
+  void *memref = malloc(nmemb);
+  if (unlikely(memref == NULL))
+    {
+      perror("calloc");
+      exit(errno);
+    }
+  return memset(memref, 0, nmemb);
+}
+
+/**
+ * \brief error-checked calloc
+ *
+ * Also zeroes out returned memory.
+ * \see \fn calloc
+ * @param nmemb
+ * @param size
+ * @return ptr to memory
+ */
+void *Calloc (size_t nmemb, size_t size)
+{
+  assert(nmemb > 0 && size > 0);
+  void *memref = calloc(nmemb, size);
+  if (unlikely(memref == NULL))
+    {
+      perror("calloc");
+      exit(errno);
+    }
+  return memset(memref, 0, sizeof *memref);
+}
+
+void *Realloc(void *ptr, size_t size)
+{
+  void *ret = realloc(ptr, size);
+  if (unlikely(ret == NULL))
+    {
+      perror("realloc");
+      exit(errno);
+    }
+  return ret;
+}
+
+void *Memcpy(void *dest, const void *src, size_t n)
+{
+  void *ret = memcpy(dest, src, n);
+  if (unlikely(ret == NULL))
+    {
+      perror("memcpy");
+      exit(errno);
+    }
+  return ret;
+}
+
+/**
+ * \brief error-checked strdup
+ * @param s
+ * @return ptr to dup s
+ */
+char *Strdup(const char *s)
+{
+  char *ret = strdup(s);
+  if (unlikely(ret == NULL))
+    {
+      perror("strdup");
+      exit(errno);
+    }
+  return ret;
+}
+
+int Streq(const char*str1, const char *str2)
+{
+  return strcmp(str1, str2) == 0;
+}
 
 /**
  * \brief error-checked fgets
@@ -27,12 +113,12 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
  * @param s
  * @param size
  * @param stream
- * @return
+ * @return ptr to string
  */
 char *Fgets (char *s, int size, FILE *stream)
 {
   char *ret = fgets (s, size, stream);
-  if (ret == NULL && ferror (stream))
+  if (unlikely(ret == NULL && ferror (stream)))
 	{
 	  perror ("fgets");
 	  exit (errno);
@@ -49,33 +135,11 @@ char *Fgets (char *s, int size, FILE *stream)
  */
 void Fputs (const char *s, FILE *stream)
 {
-  if (fputs (s, stream) == EOF)
+  if (unlikely(fputs (s, stream) == EOF))
 	{
 	  perror ("fputs");
 	  exit (errno);
 	}
-}
-
-/**
- * \brief error-checked printf
- *
- * \see \fn printf
- * @param fmt
- * @param ...
- * @return characters read
- */
-int Printf (const char *fmt, ...)
-{
-  va_list ap;
-  va_start (ap, fmt);
-
-  int ret = vprintf (fmt, ap);
-  if (ret < 0)
-	{
-	  perror ("printf");
-	  exit (errno);
-	}
-  return ret;
 }
 
 /**
@@ -93,7 +157,7 @@ int Fprintf (FILE *stream, const char *fmt, ...)
   va_start (ap, fmt);
 
   int ret = vfprintf (stream, fmt, ap);
-  if (ret < 0)
+  if (unlikely(ret < 0))
 	{
 	  perror ("printf");
 	  exit (errno);
@@ -101,12 +165,21 @@ int Fprintf (FILE *stream, const char *fmt, ...)
   return ret;
 }
 
+/**
+ * \brief error-checked snprintf
+ * \see \fn snprintf
+ * @param str
+ * @param size
+ * @param fmt
+ * @param ...
+ * @return characters printed
+ */
 int Snprintf (char *str, size_t size, const char *fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
   int ret = vsnprintf (str, size, fmt, ap);
-  if (ret < 1)
+  if (unlikely(ret < 1))
 	{
 	  perror("snprintf");
 	  exit(errno);
@@ -123,7 +196,7 @@ int Snprintf (char *str, size_t size, const char *fmt, ...)
 void Fclose (FILE *file)
 {
   int ret = fclose (file);
-  if (ret == EOF)
+  if (unlikely(ret == EOF))
 	{
 	  perror ("fclose");
 	  exit (errno);
@@ -141,7 +214,7 @@ void Fclose (FILE *file)
 FILE *Popen (const char *command, const char *type)
 {
   FILE *stream = popen(command, type);
-  if (stream == NULL)
+  if (unlikely(stream == NULL))
 	{
 	  perror ("popen");
 	  exit(errno);
@@ -157,9 +230,31 @@ FILE *Popen (const char *command, const char *type)
  */
 void Pclose (FILE *stream)
 {
-  if (pclose (stream) == -1)
+  if (unlikely(pclose (stream) == -1))
 	{
 	  perror ("pclose");
 	  exit(errno);
 	}
+}
+
+void Warning(const char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  Fprintf(stderr, strcat ("Warning: ", fmt), ap);
+}
+
+void DEBUG(const char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  Fprintf(stderr, strcat ("DEBUG: ", fmt), ap);
+}
+
+void Error(const char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  Fprintf(stderr, strcat ("Error: ", fmt), ap);
+  exit(-1);
 }

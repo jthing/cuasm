@@ -30,12 +30,10 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 int main (int argc, char *argv[])
 {
   int c;
-  char *outfile = "elf.o";
   while ( (c = getopt (argc, argv, "o:")) != -1)
 	switch (c)
   		{
 	  	case 'o':
-			outfile = optarg;
 			break;
 	  	case '?':
 			if (optopt == 'o')

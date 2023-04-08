@@ -15,11 +15,11 @@
 void ws_bstrip (char *buf)
 {
   size_t j = strlen (buf) - 1;
-  while (!isspace(buf[j]))
+  while (isspace(buf[j]))
 	{
 	  --j;
 	}
-  buf[j] = '\0';
+  buf[j+1] = '\0';
 }
 
 /**
