@@ -277,11 +277,6 @@ extern const struct ofmt of_dbg;
  */
 
 static const struct ofmt * const drivers[] = {
-#ifdef OF_BIN
-    &of_bin,
-    &of_ith,
-    &of_srec,
-#endif
 #ifdef OF_ELF32
     &of_elf32,
 #endif
@@ -290,12 +285,6 @@ static const struct ofmt * const drivers[] = {
 #endif
 #ifdef OF_ELFX32
     &of_elfx32,
-#endif
-#ifdef OF_IEEE
-    &of_ieee,
-#endif
-#ifdef OF_DBG
-    &of_dbg,
 #endif
 
     NULL

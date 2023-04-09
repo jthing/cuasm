@@ -18,7 +18,10 @@
 enum out_type {
     OUT_RAWDATA,    /* Plain bytes */
     OUT_RESERVE,    /* Reserved bytes (RESB et al) */
+    OUT_ZERODATA,   /* Initialized data, but all zero */
     OUT_ADDRESS,    /* An address (symbol value) */
+    OUT_RELADDR,    /* A relative address */
+    OUT_SEGMENT,    /* A segment number */
     OUT_REL1ADR,
     OUT_REL2ADR,
     OUT_REL4ADR,
@@ -32,6 +35,36 @@ typedef enum {
     DIRR_UNKNOWN
 } directive, directive_result;
 
+enum out_flags {
+    OUT_WRAP     = 0,           /* Undefined signedness (wraps) */
+    OUT_SIGNED   = 1,           /* Value is signed */
+    OUT_UNSIGNED = 2,           /* Value is unsigned */
+    OUT_SIGNMASK = 3            /* Mask for signedness bits */
+};
+
+struct src_location {
+    const char *filename;
+    int32_t lineno;
+};
+
+struct out_data {
+    int64_t offset;             /* Offset within segment */
+    int32_t segment;            /* Segment written to */
+    enum out_type type;         /* See above */
+    enum out_flags flags;       /* See above */
+    int inslen;                 /* Length of instruction */
+    int insoffs;                /* Offset inside instruction */
+    int bits;                   /* Bits mode of compilation */
+    uint64_t size;              /* Size of output */
+    const struct itemplate *itemp; /* Instruction template */
+    const void *data;           /* Data for OUT_RAWDATA */
+    uint64_t toffset;           /* Target address offset for relocation */
+    int32_t tsegment;           /* Target segment for relocation */
+    int32_t twrt;               /* Relocation with respect to */
+    int64_t relbase;            /* Relative base for OUT_RELADDR */
+    struct src_location where;  /* Source file and line */
+};
+
 struct pragma;
 typedef enum directive_result (*pragma_handler)(const struct pragma *);
 
@@ -44,18 +77,6 @@ union intorptr {
     uintptr_t up;
 };
 typedef union intorptr intorptr;
-
-struct src_location {
-    const char *filename;
-};
-
-struct out_data {
-    enum out_type type;         /* See above */
-    int bits;                   /* Bits mode of compilation */
-    uint64_t size;              /* Size of output */
-    const void *data;           /* Data for OUT_RAWDATA */
-    struct src_location where;  /* Source file and line */
-};
 
 #define list_for_each_safe(pos, _n, head)                \
     for (pos = head, _n = (pos ? pos->next : NULL); pos; \
@@ -170,4 +191,6 @@ bool is_really_simple(const expr *);
 bool is_simple(const expr *);
 
 int32_t seg_alloc(void);
+#define ZERO_BUF_SIZE 65536
+extern const uint8_t zero_buffer[ZERO_BUF_SIZE];
 

@@ -15,6 +15,8 @@ typedef enum {false, true} bool;
 
 char *skip_word(const char *);
 char *skip_ws(const char *);
+char *opt_val(char *, char **, char **);
+char *get_word(char *, char **);
 
 void *Calloc(size_t, size_t);
 void *Malloc(size_t);

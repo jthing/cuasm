@@ -24,6 +24,59 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <ctype.h>
 #include "wrap.h"
 
+char *get_word(char *p, char **tail)
+{
+  char *word = skip_ws(p);
+  char *next = skip_word(word);
+
+  if (word && *word) {
+      if (*next)
+        *next++ = '\0';
+    } else
+    word = next = NULL;
+
+  /* NOTE: the tail may start with spaces */
+  *tail = next;
+
+  return word;
+}
+
+char *opt_val(char *p, char **val, char **next)
+{
+  char *q, *nxt;
+
+  *val = *next = NULL;
+
+  p = get_word(p, &nxt);
+  if (!p)
+    return NULL;
+
+  q = strchr(p, '=');
+  if (q) {
+      if (q == p)
+        p = NULL;
+      *q++='\0';
+      if (*q) {
+          *val = q;
+        } else {
+          q = get_word(q + 1, &nxt);
+          if (q)
+            *val = q;
+        }
+    } else {
+      q = skip_ws(nxt);
+      if (q && *q == '=') {
+          q = get_word(q + 1, &nxt);
+          if (q)
+            *val = q;
+        }
+    }
+
+  *next = nxt;
+  return p;
+}
+
+
 char *skip_ws(const char *str)
 {
   while (isspace(*str)) str++;

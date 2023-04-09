@@ -47,6 +47,7 @@
 #include "ver.h"
 #include "dwarf.h"
 #include "stabs.h"
+#include "labels.h"
 #include "outform.h"
 #include "outlib.h"
 #include "outelf.h"
@@ -70,7 +71,6 @@ struct pragma_facility {
 
 extern char *nasm_opt_val (char *, char **, char **);
 extern bool pass_first ();
-extern void backend_label (char *, int32_t, int32_t);
 
 extern void stdscan_reset ();
 
@@ -437,7 +437,7 @@ static void elf_section_attrib (char *name, char *attr, uint32_t *flags_and, uin
   if (!opt || !*opt)
     return;
 
-  while ((opt = nasm_opt_val (opt, &val, &next)))
+  while ((opt = opt_val (opt, &val, &next)))
     {
       if (!strcmp (opt, "align"))
         {

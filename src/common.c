@@ -83,29 +83,61 @@ const struct dfmt null_debug_form = {
 };
 
 const struct dfmt * const null_debug_arr[2] = { &null_debug_form, NULL };
+struct dfmt *dfmt = (struct dfmt *) &null_debug_form;
+const struct ofmt *ofmt;
+
+bool reproducible = false;
+#define NASM_VER "2.17rc0"
+
+static const char * const _nasm_signature[2] = {
+    "NASM " NASM_VER,
+    "NASM"
+};
+
+
+const char *nasm_signature(void)
+{
+  return _nasm_signature[reproducible];
+}
+
+size_t nasm_signature_len(void)
+{
+  return strlen(nasm_signature());
+}
+
+void fwritezero(size_t bytes, FILE *fp)
+{}
+
+#define p_define                 226
+#define p_macro                  232
+#define p_endmacro               199
+#define p_imacro                 233
+#define EOL                      127
+
+const unsigned char elf_stdmac[] = {
+    /* From ./output/outelf.mac */
+    /*    0 */ p_define,'_','_','?','S','E','C','T','?','_','_',' ','[','s','e','c','t','i','o','n',' ','.','t','e','x','t',']',EOL,
+    /*   28 */ p_macro,'_','_','?','N','A','S','M','_','C','D','e','c','l','?','_','_',' ','1',EOL,
+    /*   48 */ p_define,'$','_','%','1',' ','$','%','1',EOL,
+    /*   58 */ p_endmacro,EOL,
+    /*   60 */ p_imacro,'o','s','a','b','i',' ','1','+','.','n','o','l','i','s','t',EOL,
+    /*   77 */ '[','%','?',' ','%','1',']',EOL,
+    /*   85 */ p_endmacro,EOL,
+    /*   87 */ EOL
+};
+
+const uint8_t zero_buffer[ZERO_BUF_SIZE];
+
 /*
-nasm_opt_val
+elf_stdmac
+elf_deflabel
+pass_first
 nasm_do_legacy_output
-nasm_signature_len
-
-dfmt
-dfmt_is_stabs
-dfmt_is_dwarf
-
-ofmt
-
 stdscan_reset
 stdscan_set
 stdscan_get
-
 is_simple
-
 backend_label
 fwritezero
-
-// belong elsewhere
-
-ol_seg_alloc
-pass_first
 evaluate
 */

@@ -210,7 +210,7 @@ static void ol_add_sym_to(struct ol_symlist *syml, struct ol_symhead *head,
  */
 void ol_mkloc(struct ol_loc *loc, int64_t offs, int32_t seg)
 {
-    nasm_zero(*loc);
+    memset(loc, 0, sizeof *loc);
     loc->offs = offs;
 
     if (unlikely((uint32_t)seg >= SEG_ABS)) {

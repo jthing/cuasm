@@ -38,7 +38,8 @@
 #ifndef LABELS_H
 #define LABELS_H
 
-#include "compiler.h"
+#include "wrap.h"
+#include "common.h"
 
 enum mangle_index {
     LM_LPREFIX,                 /* Local variable prefix */
