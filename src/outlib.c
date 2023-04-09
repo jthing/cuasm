@@ -37,9 +37,9 @@
  * Common routines for the output backends.
  */
 
+#include "wrap.h"
 #include "outlib.h"
 #include "raa.h"
-#include "wrap.h"
 
 uint64_t realsize(enum out_type type, uint64_t size)
 {

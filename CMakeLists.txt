@@ -17,13 +17,18 @@ add_executable(cuasm_bg
         ${CMAKE_CURRENT_SOURCE_DIR}/src/htoi.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/wrap.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/saa.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/readnum.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/rbtree.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/hashtbl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/crc32.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/crc64.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/exprlib.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/saa.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/raa.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/outform.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/outlib.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/outelf.c
-        ${CMAKE_INCLUDE_PATH})
+        ${CMAKE_INCLUDE_PATH} include/common.h src/common.c src/ilog2.c)
 
 add_subdirectory(thirdparty)
 

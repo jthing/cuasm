@@ -37,11 +37,10 @@
 #include <string.h>
 #include "saa.h"
 #include "wrap.h"
+#include "common.h"
 
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
-typedef enum {false, true} bool;
-
 
 /* Aggregate SAA components smaller than this */
 #define SAA_BLKSHIFT	16
@@ -305,7 +304,7 @@ void saa_fpwrite(struct SAA *s, FILE * fp)
 
     saa_rewind(s);
     while (len = s->datalen, (data = saa_rbytes(s, &len)) != NULL)
-        nasm_write(data, len, fp);
+        Fwrite(data, ARRAY_SIZE(data), len, fp);
 }
 
 void saa_write8(struct SAA *s, uint8_t v)

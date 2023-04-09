@@ -34,15 +34,13 @@
 #ifndef NASM_OUTLIB_H
 #define NASM_OUTLIB_H
 
-#include "compiler.h"
+#include "common.h"
 #include "error.h"
 #include "hashtbl.h"
 #include "saa.h"
 #include "rbtree.h"
 
-typedef enum {false, true} bool;
-
-uint64_t realsize(enum out_type type, uint64_t size);
+__attribute__((unused)) uint64_t realsize(enum out_type type, uint64_t size);
 
 /* Do-nothing versions of some output routines */
 enum directive_result

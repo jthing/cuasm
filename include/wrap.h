@@ -4,11 +4,17 @@
 
 #pragma once
 
-#include <bits/types/FILE.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+#define MAXLINE 4096
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 typedef enum {false, true} bool;
+
+char *skip_word(const char *);
+char *skip_ws(const char *);
 
 void *Calloc(size_t, size_t);
 void *Malloc(size_t);
@@ -18,6 +24,8 @@ char *Strdup(const char *);
 int Streq(const char*, const char *);
 int Fprintf (FILE *, const char *, ...);
 int Snprintf(char *str, size_t size, const char *fmt, ...);
+size_t Fwrite (const void *, size_t, size_t, FILE *);
+size_t Fread (void *, size_t, size_t, FILE *s);
 char *Fgets(char *, int, FILE *);
 void Fputs(const char *, FILE *s);
 FILE *Popen(const char *, const char *);

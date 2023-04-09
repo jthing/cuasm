@@ -33,10 +33,10 @@
 
 #include <stddef.h>
 #include <assert.h>
-#include <malloc.h>
+#include "wrap.h"
+#include "common.h"
 #include "raa.h"
 #include "ilog2.h"
-#include "wrap.h"
 
 /*
  * Routines to manage a dynamic random access array of int64_ts which

@@ -40,6 +40,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "wrap.h"
+#include "common.h"
+#include "htoi.h"
 #include "raa.h"
 #include "hashtbl.h"
 #include "ver.h"
@@ -53,55 +55,20 @@
 //--------------------------------------------------------------------------------
 // TODO: must define/fix
 //
+//
 
-#define FILENAME_MAX 1024
-
-enum out_type {
-    OUT_RAWDATA,    /* Plain bytes */
-    OUT_RESERVE,    /* Reserved bytes (RESB et al) */
-    OUT_ADDRESS,    /* An address (symbol value) */
-    OUT_REL1ADR,
-    OUT_REL2ADR,
-    OUT_REL4ADR,
-    OUT_REL8ADR
-};
-
-#define nasm_zero(x) (memset(&(x), 0, sizeof(x)))
 void fwritezero (off_t bytes, FILE *fp);
 
-struct pragma;
-typedef enum directive_result (*pragma_handler)(const struct pragma *);
-
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct pragma_facility {
     const char *name;
     pragma_handler handler;
 };
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 
-typedef enum {
-    DIRR_OK,
-    D_OSABI = 1,
-    DIRR_ERROR,
-    DIRR_UNKNOWN
-} directive, directive_result;
-
-#define NO_SEG 2
-
-void nasm_write (void *, size_t, FILE *);
-
-uint16_t cpu_to_le16 (size_t);
-uint32_t cpu_to_le32 (size_t);
-uint64_t cpu_to_le64 (size_t);
-
-extern char *nasm_skip_spaces (const char *);
-extern char *nasm_skip_word (const char *);
 extern char *nasm_opt_val (char *, char **, char **);
-extern uint64_t readnum (const char *, bool *);
-extern bool is_power2 (int64_t);
-extern int32_t seg_alloc ();
 extern bool pass_first ();
 extern void backend_label (char *, int32_t, int32_t);
 
@@ -157,80 +124,6 @@ extern void stdscan_reset ();
 
 #define TYM_TYPE(x)     ((x) & 0xF8)
 
-struct src_location {
-    const char *filename;
-};
-
-struct debug_macro_info;
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-struct dfmt {
-    const char *fullname;
-    const char *shortname;
-    void (*init)(void);
-    void (*linenum)(const char *filename, int32_t linenumber, int32_t segto);
-    void (*debug_deflabel)(char *name, int32_t segment, int64_t offset,
-                           int is_global, char *special);
-    void (*debug_smacros)(bool define, const char *def);
-    void (*debug_include)(bool start, struct src_location outer,
-                          struct src_location inner);
-    void (*debug_mmacros)(const struct debug_macro_info *);
-    void (*debug_directive)(const char *directive, const char *params);
-    void (*debug_typevalue)(int32_t type);
-    void (*debug_output)(int type, void *param);
-    void (*cleanup)(void);
-    const struct pragma_facility *pragmas;
-};
-#pragma clang diagnostic pop
-
-
-struct out_data {
-    enum out_type type;         /* See above */
-    int bits;                   /* Bits mode of compilation */
-    uint64_t size;              /* Size of output */
-    const void *data;           /* Data for OUT_RAWDATA */
-    struct src_location where;  /* Source file and line */
-};
-
-typedef const unsigned char macros_t;
-enum label_type;
-enum directive;
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-struct ofmt {
-    const char *fullname;
-    const char *shortname;
-    const char *extension;
-    unsigned int flags;
-    int maxbits;
-    const struct dfmt *const *debug_formats;
-    const struct dfmt *default_dfmt;
-    macros_t *stdmac;
-    void (*init) (void);
-    void (*reset) (void);
-    void (*output) (const struct out_data *data);
-    void (*legacy_output) (int32_t segto, const void *data,
-                           enum out_type type, uint64_t size,
-                           int32_t segment, int32_t wrt);
-    void (*symdef) (char *name, int32_t segment, int64_t offset,
-                    int is_global, char *special);
-    int32_t (*section) (char *name, int *bits);
-    int32_t (*herelabel) (const char *name, enum label_type type,
-                          int32_t seg, int32_t *subsection,
-                          bool *copyoffset);
-    void (*sectalign) (int32_t seg, unsigned int value);
-    int32_t (*segbase) (int32_t segment);
-    enum directive_result (*directive) (enum directive directive, char *value);
-    void (*cleanup) (void);
-    const struct pragma_facility *pragmas;
-};
-#pragma clang diagnostic pop
-
-struct dfmt *dfmt;
-struct ofmt;
-struct ofmt *ofmt;
-
 // scanner
 
 #define TOKEN_INVALID (-1)
@@ -241,7 +134,7 @@ struct eval_hints {
 
 typedef enum {whatever} token_type;
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct tokenval {
     char *t_charptr;
@@ -250,18 +143,12 @@ struct tokenval {
     token_type t_type;
     int8_t t_flag;
 };
-#pragma clang diagnostic pop
-
-typedef struct {
-    int32_t type;                  /* a register, or EXPR_xxx */
-    int64_t value;                 /* must be >= 32 bits */
-} expr;
+#pragma GCC diagnostic pop
 
 typedef int (*scanner)(void *private_data, struct tokenval *tv);
 
 int (*stdscan) (void *, struct tokenval *);
 
-extern bool is_simple (expr *);
 expr *evaluate (scanner sc, void *scprivate, struct tokenval *tv,
                 int *fwref, bool critical, struct eval_hints *hints);
 char *stdscan_get ();
@@ -269,28 +156,11 @@ void  stdscan_set(char *);
 
 
 // Todo: x86 spesific
-#define EXPR_REG_END 248
 #define EXPR_SIMPLE     (EXPR_REG_END+2)
-
-int64_t reloc_value (const expr *vect)
-{
-  while (vect->type && !vect->value)
-    vect++;
-  if (!vect->type)
-    return 0;
-  if (vect->type == EXPR_SIMPLE)
-    return vect->value;
-  else
-    return 0;
-}
 
 # define container_of(p, c, m) ((c *)((char *)(p) - offsetof(c,m)))
 
-extern FILE *ofile;
-
 //--------------------------------------------------------------------------------
-
-#define OF_ELF64
 
 #if defined(OF_ELF32) || defined(OF_ELF64) || defined(OF_ELFX32)
 
@@ -345,7 +215,7 @@ static int add_sectname (const char *, const char *);
 /* First debugging section index */
 static int sec_debug;
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct symlininfo {
     int offset;
@@ -353,7 +223,7 @@ struct symlininfo {
     int segto;          /* internal section number */
     char *name;          /* shallow-copied pointer of section name */
 };
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 struct linelist {
     struct linelist *next;
@@ -363,7 +233,7 @@ struct linelist {
     int line;
 };
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct sectlist {
     struct SAA *psaa;
@@ -374,7 +244,7 @@ struct sectlist {
     struct sectlist *next;
     struct sectlist *last;
 };
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 /* common debug variables */
 static int currentline = 1;
@@ -413,7 +283,7 @@ static void stabs_cleanup (void);
 
 /* This should match the order in elf_write() */
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 enum dwarf_sect {
     DWARF_ARANGES,
@@ -436,7 +306,7 @@ struct dwarf_format {
     /* ... add more here to generalize further */
 };
 
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 const struct dwarf_format *dwfmt;
 
@@ -450,7 +320,7 @@ static void dwarf_cleanup (void);
 static void dwarf_findfile (const char *);
 static void dwarf_findsect (int);
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct elf_format_info {
     size_t word;                /* Word size (4 or 8) */
@@ -470,7 +340,7 @@ struct elf_format_info {
     /* Build a relocation table */
     struct SAA *(*elf_build_reltab) (const struct elf_reloc *);
 };
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 static const struct elf_format_info *efmt;
 
@@ -563,7 +433,7 @@ static void elf_section_attrib (char *name, char *attr, uint32_t *flags_and, uin
   uint64_t align = 0;
   uint64_t xalign = 0;
 
-  opt = nasm_skip_spaces (attr);
+  opt = skip_ws (attr);
   if (!opt || !*opt)
     return;
 
@@ -577,8 +447,7 @@ static void elf_section_attrib (char *name, char *attr, uint32_t *flags_and, uin
             }
           else
             {
-              bool err;
-              uint64_t a = readnum (val, &err);
+              uint64_t a = htoi (val);
               if (a && !is_power2 ((int64_t) a))
                 {
                   Warning ("section alignment %"PRId64" is not a power of two", a);
@@ -679,13 +548,12 @@ static void elf_section_attrib (char *name, char *attr, uint32_t *flags_and, uin
           uint64_t mult;
           size_t l;
           const char *a = strchr (opt, '*');
-          bool err;
           const struct size_unit *su;
 
           if (a)
             {
               l = a - opt - 1;
-              mult = readnum (a + 1, &err);
+              mult = htoi (a + 1);
             }
           else
             {
@@ -740,7 +608,6 @@ __attribute__((unused)) static int
 elf_directive (int directive, char *value)
 {
   uint64_t n;
-  bool err;
   char *p;
 
   switch (directive)
@@ -749,12 +616,7 @@ elf_directive (int directive, char *value)
         if (!pass_first ())      /* XXX: Why? */
           return DIRR_OK;
 
-      n = readnum (value, &err);
-      if (err)
-        {
-          Warning ("`osabi' directive requires a parameter");
-          return DIRR_ERROR;
-        }
+      n = htoi (value);
 
       if (n < 0 || n > 255)
         {
@@ -769,12 +631,7 @@ elf_directive (int directive, char *value)
       if (!p)
         return DIRR_OK;
 
-      n = readnum (p + 1, &err);
-      if (err || n < 0 || n > 255)
-        {
-          Warning ("invalid ABI version number (valid: 0 to 255)");
-          return DIRR_ERROR;
-        }
+      n = htoi (p + 1);
 
       elf_abiver = n;
       return DIRR_OK;
@@ -1004,7 +861,7 @@ static int32_t elf_section_names (char *name, int *bits)
       return def_seg;
     }
 
-  p = nasm_skip_word (name);
+  p = skip_word (name);
   if (*p)
     *p++ = '\0';
   flags_and = flags_or = type = 0;
@@ -1079,7 +936,7 @@ static void elf_deflabel (char *name, int32_t segment, int64_t offset,
 {
   int pos = strslen;
   struct elf_symbol *sym;
-  const char *spcword = nasm_skip_spaces (special);
+  const char *spcword = skip_ws (special);
   int bind, type;             /* st_info components */
   const struct elf_section *sec = NULL;
 
@@ -1118,7 +975,7 @@ static void elf_deflabel (char *name, int32_t segment, int64_t offset,
           {
             struct tokenval tokval;
             expr *e;
-            char *p = nasm_skip_spaces (nasm_skip_word (special));
+            char *p = skip_ws (skip_word (special));
 
             stdscan_reset ();
             stdscan_set (p);
@@ -1188,15 +1045,11 @@ static void elf_deflabel (char *name, int32_t segment, int64_t offset,
          */
       if (spcword)
         {
-          bool err;
-          sym->symv.key = readnum (spcword, &err);
-          if (err)
-            Warning ("alignment constraint `%s' is not a"
-                     " valid number", special);
-          else if (!is_power2 (sym->symv.key))
+          sym->symv.key = htoi (spcword);
+          if (!is_power2 (sym->symv.key))
             Warning ("alignment constraint `%s' is not a"
                      " power of two", special);
-          spcword = nasm_skip_spaces (nasm_skip_word (spcword));
+          spcword = skip_ws (skip_word (spcword));
         }
     }
   else
@@ -1212,7 +1065,7 @@ static void elf_deflabel (char *name, int32_t segment, int64_t offset,
       while (ok)
         {
           size_t wlen;
-          wend = nasm_skip_word (spcword);
+          wend = skip_word (spcword);
           wlen = wend - spcword;
 
           switch (wlen)
@@ -1268,7 +1121,7 @@ static void elf_deflabel (char *name, int32_t segment, int64_t offset,
             }
 
           if (ok)
-            spcword = nasm_skip_spaces (wend);
+            spcword = skip_ws (wend);
         }
       if (!is_global && bind != STB_LOCAL)
         {
@@ -2348,7 +2201,7 @@ static inline uint16_t elf_shndx (int section, uint16_t overflow)
   return cpu_to_le16 (section < (int) SHN_LORESERVE ? section : overflow);
 }
 
-#pragma clang diagnostic push
+#pragma GCC diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 struct ehdr_common {
     uint8_t e_ident[EI_NIDENT];
@@ -2356,7 +2209,7 @@ struct ehdr_common {
     uint16_t e_machine;
     uint32_t e_version;
 };
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 union ehdr {
     Elf32_Ehdr ehdr32;
@@ -2429,7 +2282,7 @@ static void elf_write (void)
   /*
      * Output the ELF header.
      */
-  nasm_zero (ehdr);
+  memset(&ehdr, 0, sizeof ehdr);
 
   /* These fields are in the same place for 32 and 64 bits */
   memcpy (&ehdr.com.e_ident[EI_MAG0], ELFMAG, SELFMAG);
@@ -2459,7 +2312,8 @@ static void elf_write (void)
       ehdr.ehdr64.e_shstrndx = elf_shndx (sec_shstrtab, SHN_XINDEX);
     }
 
-  nasm_write (&ehdr, sizeof (ehdr), ofile);
+  char buffer[MAXLINE];
+  Fwrite (&ehdr, sizeof ehdr, sizeof &ehdr, ofile);
   elf_foffs = sizeof ehdr + efmt->shdr_size * nsections;
 
   /*
@@ -2689,13 +2543,13 @@ static size_t elf_build_symtab (void)
   /*
      * Zero symbol first as required by spec.
      */
-  nasm_zero (xsym);
+  memset(&xsym, 0, sizeof xsym);
   elf_sym (&xsym);
 
   /*
      * Next, an entry for the file name.
      */
-  nasm_zero (xsym);
+  memset(&xsym, 0, sizeof xsym);
   xsym.strpos = 1;
   xsym.type = ELF32_ST_INFO(STB_LOCAL, STT_FILE);
   xsym.section = XSHN_ABS;
@@ -2705,7 +2559,7 @@ static size_t elf_build_symtab (void)
      * Now some standard symbols defining the segments, for relocation
      * purposes.
      */
-  nasm_zero (xsym);
+  memset(&xsym, 0, sizeof xsym);
   for (i = 1; i <= nsects; i++)
     {
       xsym.type = ELF64_ST_INFO(STB_LOCAL, STT_SECTION);
@@ -2895,7 +2749,7 @@ static void elf_section_header (int name, int type, uint64_t flags,
       shdr.sh_addralign = cpu_to_le32 (align);
       shdr.sh_entsize = cpu_to_le32 (entsize);
 
-      nasm_write (&shdr, sizeof shdr, ofile);
+      Fwrite (&shdr, sizeof shdr, sizeof shdr, ofile);
     }
   else
     {
@@ -2914,7 +2768,7 @@ static void elf_section_header (int name, int type, uint64_t flags,
       shdr.sh_addralign = cpu_to_le64 (align);
       shdr.sh_entsize = cpu_to_le64 (entsize);
 
-      nasm_write (&shdr, sizeof shdr, ofile);
+      Fwrite (&shdr, sizeof shdr, sizeof shdr, ofile);
     }
 }
 
@@ -2930,7 +2784,7 @@ static void elf_write_sections (void)
         if (elf_sects[i].is_saa)
           saa_fpwrite (elf_sects[i].data, ofile);
         else
-          nasm_write (elf_sects[i].data, len, ofile);
+          Fwrite (elf_sects[i].data, sizeof elf_sects[i].data, len, ofile);
         fwritezero (align, ofile);
       }
 }

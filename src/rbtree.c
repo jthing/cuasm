@@ -63,9 +63,9 @@
  * check.
  */
 
+#include <string.h>
 #include "rbtree.h"
-
-typedef enum {false, true} bool;
+#include "wrap.h"
 
 struct rbtree *rb_search(const struct rbtree *tree, uint64_t key)
 {
@@ -170,7 +170,7 @@ struct rbtree *rb_insert(struct rbtree *tree, struct rbtree *node)
 {
     /* Initialize node as if it was the sole member of the tree */
 
-    nasm_zero(node->m);
+    memset(&(node->m), 0, sizeof node->m);
     node->m.flags = RBTREE_NODE_PRED|RBTREE_NODE_SUCC;
 
     if (unlikely(!tree))

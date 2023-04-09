@@ -38,7 +38,8 @@
  *		for it
  */
 
-#include "compiler.h"
+#include "wrap.h"
+#include "common.h"
 
 
 #define BUILD_DRIVERS_ARRAY
@@ -56,14 +57,14 @@ const struct ofmt *ofmt_find(const char *name,
 
     /* primary targets first */
     for (ofp = drivers; (of = *ofp); ofp++) {
-        if (!nasm_stricmp(name, of->shortname))
+        if (strcmp(name, of->shortname) != 0)
             return of;
     }
 
     /* lets walk thru aliases then */
     for (i = 0; i < ARRAY_SIZE(ofmt_aliases); i++) {
         if (ofmt_aliases[i].shortname &&
-            !nasm_stricmp(name, ofmt_aliases[i].shortname)) {
+            strcmp(name, ofmt_aliases[i].shortname) != 0) {
             *ofmt_alias = &ofmt_aliases[i];
             return ofmt_aliases[i].ofmt;
         }
@@ -78,7 +79,7 @@ const struct dfmt *dfmt_find(const struct ofmt *ofmt, const char *name)
     const struct dfmt *df;
 
     for (dfp = ofmt->debug_formats; (df = *dfp); dfp++) {
-        if (!nasm_stricmp(name, df->shortname))
+        if (strcmp(name, df->shortname) != 0)
             return df;
     }
     return NULL;

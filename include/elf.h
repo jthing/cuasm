@@ -40,7 +40,6 @@
  */
 
 #include <stdint.h>
-#include "compiler.h"
 
 /* Segment types */
 #define PT_NULL		0

@@ -282,15 +282,6 @@ static const struct ofmt * const drivers[] = {
     &of_ith,
     &of_srec,
 #endif
-#ifdef OF_AOUT
-    &of_aout,
-#endif
-#ifdef OF_AOUTB
-    &of_aoutb,
-#endif
-#ifdef OF_COFF
-    &of_coff,
-#endif
 #ifdef OF_ELF32
     &of_elf32,
 #endif
@@ -300,26 +291,8 @@ static const struct ofmt * const drivers[] = {
 #ifdef OF_ELFX32
     &of_elfx32,
 #endif
-#ifdef OF_AS86
-    &of_as86,
-#endif
-#ifdef OF_OBJ
-    &of_obj,
-#endif
-#ifdef OF_WIN32
-    &of_win32,
-#endif
-#ifdef OF_WIN64
-    &of_win64,
-#endif
 #ifdef OF_IEEE
     &of_ieee,
-#endif
-#ifdef OF_MACHO32
-    &of_macho32,
-#endif
-#ifdef OF_MACHO64
-    &of_macho64,
 #endif
 #ifdef OF_DBG
     &of_dbg,

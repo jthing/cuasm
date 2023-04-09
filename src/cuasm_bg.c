@@ -26,8 +26,6 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include "utils.h"
 #include "wrap.h"
 
-#define MAXLINE 1024
-
 int main ()
 {
   if (isatty (STDIN_FILENO))

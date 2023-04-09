@@ -34,8 +34,7 @@
 #ifndef NASM_RAA_H
 #define NASM_RAA_H 1
 
-#include <bits/stdint-uintn.h>
-#include <bits/stdint-intn.h>
+#include <stdint.h>
 
 struct RAA;
 typedef uint64_t raaindex;

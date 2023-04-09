@@ -35,7 +35,6 @@
 #define NASM_SAA_H
 
 #include <inttypes.h>
-#include "compiler.h"
 
 /*
  * Routines to manage a dynamic sequential-access array, under the
