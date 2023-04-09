@@ -294,12 +294,6 @@ static const struct ofmt_alias ofmt_aliases[] = {
 #ifdef OF_ELF32
     { "elf",  &of_elf32 },
 #endif
-#ifdef OF_MACHO32
-    { "macho", &of_macho32 },
-#endif
-#ifdef OF_WIN32
-    { "win",   &of_win32 },
-#endif
     { NULL, NULL }
 };
 

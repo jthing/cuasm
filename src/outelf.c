@@ -160,6 +160,12 @@ void  stdscan_set(char *);
 
 # define container_of(p, c, m) ((c *)((char *)(p) - offsetof(c,m)))
 
+expr *evaluate(scanner sc, void *scprivate, struct tokenval *tv,
+               int *fwref, bool crit, struct eval_hints *hints)
+{
+}
+
+
 //--------------------------------------------------------------------------------
 
 #if defined(OF_ELF32) || defined(OF_ELF64) || defined(OF_ELFX32)
