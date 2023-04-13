@@ -162,17 +162,3 @@ void stdscan_reset (void)
   while (stdscan_templen > 0)
     stdscan_pop ();
 }
-
-/*
-elf_stdmac
-elf_deflabel
-pass_first
-nasm_do_legacy_output
-stdscan_reset
-stdscan_set
-stdscan_get
-is_simple
-backend_label
-fwritezero
-evaluate
-*/

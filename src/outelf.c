@@ -48,7 +48,6 @@
 #include "dwarf.h"
 #include "stabs.h"
 #include "labels.h"
-#include "outform.h"
 #include "outlib.h"
 #include "outelf.h"
 
@@ -69,7 +68,6 @@ struct pragma_facility {
 #pragma GCC diagnostic pop
 
 
-extern char *nasm_opt_val (char *, char **, char **);
 extern bool pass_first ();
 
 extern void stdscan_reset ();
@@ -163,6 +161,7 @@ void  stdscan_set(char *);
 expr *evaluate(scanner sc, void *scprivate, struct tokenval *tv,
                int *fwref, bool crit, struct eval_hints *hints)
 {
+  return NULL;
 }
 
 
@@ -2319,7 +2318,7 @@ static void elf_write (void)
     }
 
   char buffer[MAXLINE];
-  Fwrite (&ehdr, sizeof ehdr, sizeof &ehdr, ofile);
+  Fwrite (&ehdr, sizeof ehdr, sizeof ehdr, ofile);
   elf_foffs = sizeof ehdr + efmt->shdr_size * nsections;
 
   /*
