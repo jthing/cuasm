@@ -10,8 +10,6 @@
 #define MAXLINE 4096
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-typedef enum {false, true} bool;
 
 char *skip_word(const char *);
 char *skip_ws(const char *);

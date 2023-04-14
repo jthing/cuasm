@@ -20,9 +20,12 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-#include <libgen.h>
-#include <errno.h>
-#include "htoi.h"
+
+#include "elfutils/libasm/libasm.h"
+#include "elfutils/libebl/libebl.h"
+#include <libelf.h>
+#include <elf.h>
+
 #include "utils.h"
 #include "wrap.h"
 
@@ -75,23 +78,52 @@ int main ()
           abort ();
       }
 
-  // write to output file
-  FILE *out;
-  if ((out = fopen (outfile, "w")) == NULL)
+  AsmCtx_t *ctx;
+  AsmScn_t *scn1;
+  AsmScn_t *scn2;
+
+  elf_version (EV_CURRENT);
+
+  Ebl *ebl = ebl_openbackend_machine (EM_CUDA);
+  if (ebl == NULL)
     {
-      perror (basename (cmdv[0]));
-      exit (errno);
+      Fputs ("cannot open backend library", stderr);
+      return 1;
     }
 
-  // Finally process the .asm file
-  while (Fgets (buf, MAXLINE + 1, in_file) != NULL)
+  ctx = asm_begin (outfile, ebl, false);
+  if (ctx == NULL)
     {
-      char *ln = ws_strip (buf);
-      Fprintf (out, "%s = %lu\n", ln, htoi (ln));
+      Fprintf (stderr, "cannot create assembler context: %s\n", asm_errmsg (-1));
+      return 1;
     }
 
-  if (out != stdout)
-    Fclose (out);
+  // Create two sections.
+  scn1 = asm_newscn (ctx, ".text", SHT_PROGBITS, SHF_ALLOC | SHF_EXECINSTR);
+  scn2 = asm_newscn (ctx, ".data", SHT_PROGBITS, SHF_ALLOC | SHF_WRITE);
+  if (scn1 == NULL || scn2 == NULL)
+    {
+      Fprintf (stderr, "cannot create section in output file: %s\n", asm_errmsg (-1));
+      asm_abort (ctx);
+      return 1;
+    }
+
+  // Special alignment for the .text section.
+  if (asm_align (scn1, 32) != 0)
+    {
+      Fprintf (stderr, "cannot align .text section: %s\n", asm_errmsg (-1));
+      return 1;
+    }
+
+  // Create the output file.
+  if (asm_end (ctx) != 0)
+    {
+      Fprintf (stderr, "cannot create output file: %s\n", asm_errmsg (-1));
+      asm_abort (ctx);
+      return 1;
+    }
+
+  ebl_closebackend (ebl);
 
   return 0;
 }

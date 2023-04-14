@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 project(cuasm-compiler C)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold")
 
 find_program(CPP_PATH CPP /usr/bin)
 
@@ -17,21 +18,27 @@ add_executable(cuasm_bg
         ${CMAKE_CURRENT_SOURCE_DIR}/src/htoi.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/wrap.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/readnum.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/rbtree.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/hashtbl.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/crc32.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/crc64.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ilog2.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/exprlib.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/saa.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/raa.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/labels.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/legacy.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/outform.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/outlib.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/outelf.c
         ${CMAKE_INCLUDE_PATH})
+target_include_directories(cuasm_bg INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libasm/libasm.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libdw/libdw.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libebl/libebl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libdwelf/libdwelf.h)
+find_library(ELFUTILS
+        NAME libelf
+        HINT /usr/local/lib)
+target_link_libraries(cuasm_bg
+        elf
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/lib/libeu.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libasm/libasm_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libelf/libelf_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libebl/libebl_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/backends/libebl_backends_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libdw/libdw_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libdwelf/libdwelf_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/debuginfod/libdebuginfod_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libdwfl/libdwfl_pic.a
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/elfutils/libcpu/libcpu_pic.a)
 
 add_subdirectory(thirdparty)
 
