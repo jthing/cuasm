@@ -1,3 +1,4 @@
+# Prerequisites
 doc/build/
 doc/source/.org/
 doc/source/latex/
@@ -5,17 +6,17 @@ doxygen-awesome-css/
 /thirdparty/elfutils/
 /thirdparty/dwarfutils/
 /thirdparty/build/
+cmake-build-debug/
+doc/html/
+doc/latex/
+.ide/
+
+vcs.xml
 cmake_install.cmake
 vcpkg.json
 customTargets.xml
 hexy.txt
-cmake-build-debug/
-# Prerequisites
 *.d
-doc/html/
-doc/latex/
-.ide/
-vcs.xml
 
 # Object files
 *.o
