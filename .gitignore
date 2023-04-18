@@ -3,6 +3,7 @@ doc/source/.org
 doc/source/latex
 doxygen-awesome-css
 thirdparty/elfutils
+thirdparty/dwarfutils
 thirdparty/build
 cmake_install.cmake
 vcpkg.json
