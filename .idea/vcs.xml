@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/doc/doxygen-awesome-css" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/thirdparty/Unity" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdparty/dwarfutils" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/thirdparty/elfutils" vcs="Git" />
   </component>
 </project>

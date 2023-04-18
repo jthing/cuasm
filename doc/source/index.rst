@@ -24,3 +24,5 @@ Contents
 .. toctree::
 
    cuasm
+   elfutils
+   syntax

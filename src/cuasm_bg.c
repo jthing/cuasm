@@ -22,12 +22,29 @@ along with cuasm.  If not, see <https://www.gnu.org/licenses/>.  */
 #include <ctype.h>
 
 #include "elfutils/libasm/libasm.h"
-#include "elfutils/libebl/libebl.h"
+//#include "elfutils/libebl/libebl.h"
 #include <libelf.h>
 #include <elf.h>
+#include "libdwarf/libdwarf.h"
+//#include "libdwarfp/libdwarfp.h"
 
 #include "utils.h"
 #include "wrap.h"
+
+// NB! assumes little endian (fine for x_86 and arm)
+static int CallbackFunc(
+    const char* name,
+    int                 size,
+    Dwarf_Unsigned      type,
+    Dwarf_Unsigned      flags,
+    Dwarf_Unsigned      link,
+    Dwarf_Unsigned      info,
+    Dwarf_Unsigned*     sect_name_symbol_index,
+    void *              user_data,
+    int*                error);
+
+extern Ebl *ebl_openbackend_machine (GElf_Half);
+extern void ebl_closebackend(Ebl *);
 
 int main ()
 {
