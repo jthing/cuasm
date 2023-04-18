@@ -24,6 +24,11 @@ add_executable(cuasm_bg
         ${CMAKE_CURRENT_SOURCE_DIR}/src/cu-backend/cuda_symbol.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/cu-backend/cuda_unwind.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/cu-backend/cuda_retval.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/cu-backend/cuda_corenote.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/libcpu/cuda_data.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/libcpu/cuda_dis.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/libcpu/cuda_mne.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/libcpu/cuda_parse.c
         ${CMAKE_INCLUDE_PATH})
 find_library(ELFUTILS
         NAME libelf

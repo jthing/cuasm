@@ -19,11 +19,8 @@ extern Elf_Type cuda_reloc_simple_type(Ebl *pEbl, int i, int *pInt);
 
 extern bool cuda_gotpc_reloc_check(Elf *pElf, int i);
 
-int cuda_core_note(const GElf_Nhdr *ptr, const char *string, GElf_Word *pInt, size_t *pInt1,
-                   const Ebl_Register_Location **ptr1, size_t *pInt2, const Ebl_Core_Item **ptr2)
-{
-
-}
+extern int cuda_core_note(const GElf_Nhdr *ptr, const char *string, GElf_Word *pInt, size_t *pInt1,
+                          const Ebl_Register_Location **ptr1, size_t *pInt2, const Ebl_Core_Item **ptr2);
 
 extern bool cuda_debugscn_p(const char *string);
 
