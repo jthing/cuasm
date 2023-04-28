@@ -7,7 +7,7 @@
 #include "elfutils/libebl/libeblP.h"
 #include "elfutils/backends/libebl_CPU.h"
 
-#include "CUDA_reloc.h"
+#include "cuda_reloc.h"
 //#include "elfutils/backends/common-reloc.c"
 
 void cuda_init_reloc (Ebl *p_ebl)
